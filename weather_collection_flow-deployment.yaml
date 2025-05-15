@@ -1,0 +1,8 @@
+name: weather-deployment
+description: Deployment for weather collection flow
+entrypoint: flow.py:weather_collection_flow
+work_pool:
+  name: default-agent-pool
+  type: process
+  default_queue: default
+tags: []

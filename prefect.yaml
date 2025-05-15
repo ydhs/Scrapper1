@@ -1,0 +1,3 @@
+version: 2.0
+name: weather-project
+description: Парсинг погоды и прогнозов из Gismeteo
