@@ -7,3 +7,5 @@ venv/
 
 # исключение БД
 weather.db
+
+__pycache__/
