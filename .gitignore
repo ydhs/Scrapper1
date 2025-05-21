@@ -4,3 +4,6 @@ venv/
 
 # настройки PyCharm
 .idea/
+
+# исключение БД
+weather.db
