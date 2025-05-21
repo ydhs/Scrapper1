@@ -1,0 +1,9 @@
+{
+  "cities": [
+    {
+      "name": "Новосибирск",
+      "now_url": "https://www.gismeteo.ru/weather-novosibirsk-4690/now/",
+      "forecast_url": "https://www.gismeteo.ru/weather-novosibirsk-4690/tomorrow/"
+    }
+  ]
+}

@@ -4,6 +4,3 @@ venv/
 
 # настройки PyCharm
 .idea/
-
-# Исключаем базу данных
-weather.db
