@@ -19,22 +19,20 @@
 
 ## Функции
 
-* **`main.py`** — инициализация базы данных и сбор данных:
-
-  * читает список городов из `settings.json`
-  * парсит текущую температуру и прогноз на завтра (Selenium + BeautifulSoup)
-  * сохраняет результаты в SQLite (`weather.db`)
-* **`parser.py`** — реализация логики парсинга страниц Gismeteo:
-
-  * извлечение текущей и прогнозной температуры
-* **`db.py`** — работа с базой данных:
-
-  * создание таблиц при первом запуске
-  * добавление и очистка записей
-* **`analize.py`** — визуализация данных за любую дату:
-
-  * принимает дату в формате `dd.mm.YYYY`
-  * строит графики текущей (сплошная линия) и прогнозной (пунктирная линия) температуры
+- `main.py` — инициализация базы данных и сбор данных:
+  - читает список городов из `settings.json`
+  - парсит текущую температуру и прогноз на завтра (Selenium + BeautifulSoup)
+  - сохраняет результаты в SQLite (`weather.db`)
+- `parser.py` — реализация логики парсинга страниц Gismeteo:
+  - извлечение текущей и прогнозной температуры
+- `db.py` — работа с базой данных:
+  - создание таблиц при первом запуске
+  - добавление и очистка записей
+- `analize.py` — визуализация данных за любую дату:
+  - принимает дату в формате `dd.mm.YYYY`
+  - строит графики текущей и прогнозной температуры
+- `api.py` — REST API доступ к температурным данным
+- `webapi.html` — простая HTML-страница, взаимодействующая с API через браузер
 
 ---
 
@@ -48,6 +46,9 @@ Scraper1/
 ├── analize.py         # Визуализация температур за дату
 ├── settings.json      # Список городов и URL-адреса
 ├── weather.db         # Файл базы данных (создаётся автоматически)
+├── app.py             # Запуск Flask-приложения с API
+├── api.py             # Реализация API
+├── webapi.html        # Веб-интерфейс для запросов к API
 └── requirements.txt   # Зависимости проекта
 ```
 
@@ -56,22 +57,19 @@ Scraper1/
 ## Установка
 
 1. Склонируйте репозиторий:
-
    ```bash
-   git clone  https://github.com/ydhs/Scrapper1.git
-   cd Scraper1
+   git clone https://github.com/ydhs/Scrapper1.git
+   cd Scrapper1
    ```
-2. Создайте виртуальное окружение и активируйте его:
 
+2. Создайте виртуальное окружение и активируйте его:
    ```bash
    python -m venv .venv
-   # Windows PowerShell
-   .\.venv\Scripts\Activate.ps1
-   # Linux/macOS
-   source .venv/bin/activate
+   .\.venv\Scripts\Activate.ps1  # Windows
+   source .venv/bin/activate     # Linux/macOS
    ```
-3. Установите зависимости:
 
+3. Установите зависимости:
    ```bash
    pip install -r requirements.txt
    ```
@@ -86,12 +84,7 @@ Scraper1/
 {
   "cities": [
     {
-      "name": "Москва",
-      "current_url": "https://...",
-      "forecast_url": "https://..."
-    },
-    {
-      "name": "Санкт-Петербург",
+      "name": "Новосибирск",
       "current_url": "https://...",
       "forecast_url": "https://..."
     }
@@ -104,20 +97,35 @@ Scraper1/
 ## Запуск
 
 1. **Сбор данных**:
-
    ```bash
    python main.py
    ```
 
-   После выполнения появится файл `weather.db` с заполненными таблицами.
-
 2. **Визуализация**:
-
    ```bash
-   python analize.py DD.MM.YYYY
+   python analize.py 22.05.2025
    ```
 
-   Где `DD.MM.YYYY` — интересующая вас дата. Скрипт отрисует график для текущей и прогнозной температур.
+3. **Запуск API-сервера**:
+   ```bash
+   python app.py
+   ```
+
+   После запуска доступен API по адресу `http://127.0.0.1:5000/api/...`
+
+   Примеры:
+
+   - Последняя температура:
+     `http://127.0.0.1:5000/api/temperature?city=Новосибирск`
+
+   - Прогноз на день с сортировкой:
+     `http://127.0.0.1:5000/api/forecast?city=Новосибирск&day=22.05.2025&sort=desc`
+
+4. **Работа с веб-интерфейсом**:
+
+   Откройте файл `webapi.html` в браузере.
+
+   Это простая HTML-страница, позволяющая отправлять запросы к API через форму и отображать результат в браузере. Flask-приложение должно быть запущено.
 
 ---
 
@@ -125,32 +133,30 @@ Scraper1/
 
 Используется SQLite-файл `weather.db` с тремя таблицами:
 
-* `cities`:
-
-  * `id` (INTEGER, PK) — идентификатор города
-  * `name` (TEXT) — название города
-  * `url` (TEXT) — базовый URL для парсинга
-* `current_temperature`:
-
-  * `id` (INTEGER, PK) — идентификатор записи
-  * `city_id` (INTEGER) — внешний ключ на `cities.id`
-  * `temperature` (REAL) — текущая температура (°C)
-  * `timestamp` (TEXT) — время сбора
-* `forecast_temperature`:
-
-  * `id` (INTEGER, PK) — идентификатор записи
-  * `city_id` (INTEGER) — внешний ключ на `cities.id`
-  * `timestamp` (TEXT) — время прогноза
-  * `temperature` (REAL) — прогнозная температура (°C)
-
-Каждая запись связывает температуру с городом из таблицы `cities`.
+- `cities`:
+  - `id` (INTEGER, PK) — идентификатор города
+  - `name` (TEXT) — название города
+  - `url` (TEXT) — базовый URL для парсинга
+- `current_temperature`:
+  - `id` (INTEGER, PK)
+  - `city_id` (INTEGER)
+  - `temperature` (REAL)
+  - `timestamp` (TEXT)
+- `forecast_temperature`:
+  - `id` (INTEGER, PK)
+  - `city_id` (INTEGER)
+  - `temperature` (REAL)
+  - `timestamp` (TEXT)
 
 ---
 
 ## Зависимости
 
-* Python ≥3.x
-* `selenium`
-* `beautifulsoup4`
-* `pandas`
-* `matplotlib`
+- Python ≥3.x
+- `selenium`
+- `beautifulsoup4`
+- `pandas`
+- `matplotlib`
+- `flask`
+- `flask-cors`
+- `requests`
