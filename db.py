@@ -63,7 +63,7 @@ def get_city_id(city_url):
 def store_current_temperature(city_url, temperature):
     city_id = get_city_id(city_url)
     if city_id is not None:
-        timestamp = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S')
+        timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
         connection = sqlite3.connect('weather.db')
         cursor = connection.cursor()
         cursor.execute('INSERT INTO current_temperature (city_id, temperature, timestamp) VALUES (?, ?, ?)', (city_id, temperature, timestamp))

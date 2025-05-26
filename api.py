@@ -138,3 +138,15 @@ def forecast():
                 "timestamp": result[1]
             })
         return make_json({"error": "нет прогноза по городу"}, 404)
+
+@api_blueprint.route("/cities")
+def get_cities():
+    try:
+        conn = sqlite3.connect("weather.db")
+        cur = conn.cursor()
+        rows = cur.execute("SELECT name FROM cities ORDER BY name").fetchall()
+        conn.close()
+        cities = [row[0] for row in rows]
+        return Response(json.dumps({"cities": cities}, ensure_ascii=False), content_type="application/json")
+    except Exception as e:
+        return Response(json.dumps({"error": str(e)}, ensure_ascii=False), content_type="application/json", status=500)

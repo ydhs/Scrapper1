@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>График температуры</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+  <h2 class="mb-4">График температуры</h2>
+
+  <form method="POST" class="row g-3">
+    <div class="col-12">
+      <label class="form-label">Выберите период:</label><br>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="dateType" id="radioDay" value="day" checked>
+        <label class="form-check-label" for="radioDay">День</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="dateType" id="radioMonth" value="month">
+        <label class="form-check-label" for="radioMonth">Месяц</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="dateType" id="radioYear" value="year">
+        <label class="form-check-label" for="radioYear">Год</label>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <label for="city" class="form-label">Город</label>
+      <select class="form-select" id="city" name="city" required>
+        <option value="" selected disabled>Загрузка...</option>
+      </select>
+    </div>
+
+    <div class="col-md-3 date-input" id="input-day">
+      <label for="day" class="form-label">День (дд.мм.гггг)</label>
+      <input type="text" class="form-control" id="day" name="day" placeholder="например, 24.05.2025">
+    </div>
+    <div class="col-md-3 date-input d-none" id="input-month">
+      <label for="month" class="form-label">Месяц (мм.гггг)</label>
+      <input type="text" class="form-control" id="month" name="month" placeholder="например, 05.2025">
+    </div>
+    <div class="col-md-2 date-input d-none" id="input-year">
+      <label for="year" class="form-label">Год (гггг)</label>
+      <input type="text" class="form-control" id="year" name="year" placeholder="например, 2025">
+    </div>
+
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Показать график</button>
+    </div>
+  </form>
+
+  {% if error %}
+    <div class="alert alert-danger mt-3">{{ error }}</div>
+  {% endif %}
+
+  {% if graph_url %}
+    <div class="mt-4">
+      <img src="{{ graph_url }}" alt="График температуры" class="img-fluid border rounded">
+    </div>
+  {% endif %}
+</div>
+
+<script>
+  // Подгрузка городов
+  fetch("/api/cities")
+    .then(r => r.json())
+    .then(data => {
+      const select = document.getElementById("city");
+      select.innerHTML = "";
+      data.cities.forEach(city => {
+        const option = document.createElement("option");
+        option.value = city;
+        option.textContent = city;
+        select.appendChild(option);
+      });
+    })
+    .catch(err => console.error("Ошибка загрузки городов:", err));
+
+  // Переключение полей даты
+  const radios = document.querySelectorAll('input[name="dateType"]');
+  radios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.date-input').forEach(div => div.classList.add('d-none'));
+      const selected = document.querySelector('input[name="dateType"]:checked').value;
+      document.getElementById('input-' + selected).classList.remove('d-none');
+    });
+  });
+</script>
+</body>
+</html>
