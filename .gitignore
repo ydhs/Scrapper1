@@ -8,4 +8,7 @@ venv/
 # исключение БД
 weather.db
 
+# исключение файла авторизации
+auth.json
+
 __pycache__/

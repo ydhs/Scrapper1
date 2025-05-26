@@ -6,12 +6,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 from datetime import datetime
+from flask_login import login_required
 
-web_blueprint = Blueprint("web", __name__)
+web_blueprint = Blueprint("web", __name__, template_folder="templates")
+graph_path = os.path.join("static", "graph.png")
 
 @web_blueprint.route("/", methods=["GET", "POST"])
+@login_required
 def index():
-    result = None
     error = None
     graph_url = None
 

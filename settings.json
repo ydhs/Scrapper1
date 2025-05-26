@@ -4,6 +4,11 @@
       "name": "Новосибирск",
       "now_url": "https://www.gismeteo.ru/weather-novosibirsk-4690/now/",
       "forecast_url": "https://www.gismeteo.ru/weather-novosibirsk-4690/tomorrow/"
+    },
+    {
+      "name": "Челябинск",
+      "now_url": "https://www.gismeteo.ru/weather-chelyabinsk-4565/now/",
+      "forecast_url": "https://www.gismeteo.ru/weather-chelyabinsk-4565/tomorrow/"
     }
   ]
 }
