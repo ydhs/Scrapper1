@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Погода — API</title>
+</head>
+<body>
+  <h2>Получить данные о погоде</h2>
+
+  <form id="weatherForm">
+    <label>Город: <input type="text" name="city" required></label><br><br>
+
+    <label>Тип данных:
+      <select name="data_type">
+        <option value="current">Текущая</option>
+        <option value="forecast">Прогноз</option>
+      </select>
+    </label><br><br>
+
+    <label>День (dd.mm.yyyy): <input type="text" name="day"></label><br>
+    <label>Месяц (mm.yyyy): <input type="text" name="month"></label><br>
+    <label>Год (yyyy): <input type="text" name="year"></label><br><br>
+
+    <label>Сортировка:
+      <select name="sort">
+        <option value="asc">По возрастанию</option>
+        <option value="desc">По убыванию</option>
+      </select>
+    </label><br><br>
+
+    <button type="submit">Получить данные</button>
+  </form>
+
+  <h3>Результат:</h3>
+  <pre id="result"></pre>
+
+  <script>
+    const form = document.getElementById("weatherForm");
+    const resultBox = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const city = formData.get("city");
+      const type = formData.get("data_type");
+      const params = new URLSearchParams();
+
+      params.append("city", city);
+
+      const day = formData.get("day");
+      const month = formData.get("month");
+      const year = formData.get("year");
+      const sort = formData.get("sort");
+
+      if (day) params.append("day", day);
+      else if (month) params.append("month", month);
+      else if (year) params.append("year", year);
+
+      if (sort) params.append("sort", sort);
+
+      const endpoint = type === "forecast" ? "forecast" : "temperature";
+      const url = `http://127.0.0.1:5000/api/${endpoint}?` + params.toString();
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        resultBox.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        resultBox.textContent = "Ошибка запроса: " + err;
+      }
+    });
+  </script>
+</body>
+</html>
